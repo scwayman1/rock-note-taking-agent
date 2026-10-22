@@ -11,7 +11,7 @@ A portable, evidence-first meeting-note kit. **Local working starter, not a host
 | Use OpenClaw | [Platform setup](docs/platforms.md#openclaw) | Reusable skill + shared local CLI |
 | Use OpenAI | [OpenAI bridge](adapters/openai/README.md) | Responses function definitions + allowlisted local executor; not inference |
 | Use Microsoft Copilot Studio | [Copilot setup](adapters/copilot/README.md) | Swagger 2 JSON REST-tool contract; tenant/hosting work remains |
-| Implement with a group | [Editable worksheet](docs/implementation-worksheet.md) · [Print version](docs/implementation-worksheet.html) | Owners, environment, approvals, pilot gates and rollback |
+| Implement with a group | [Editable worksheet](docs/implementation-worksheet.md) · [Four-page PDF](docs/implementation-worksheet.pdf) · [Print HTML](docs/implementation-worksheet.html) | Owners, environment, approvals, pilot gates and rollback |
 | See the approved PRC companion | [One-page PDF](docs/companion/PRC-Rock-Note-Taking-Agent.pdf) · [HTML](docs/companion/PRC-Rock-Note-Taking-Agent.html) | Exact approved companion; not implementation evidence |
 
 Clone this private repo with an authorized account, then run **from its root**:
