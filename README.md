@@ -12,6 +12,7 @@ A portable, evidence-first meeting-note kit. **Local working starter, not a host
 | Use OpenAI | [OpenAI bridge](adapters/openai/README.md) | Responses function definitions + allowlisted local executor; not inference |
 | Use Microsoft Copilot Studio | [Copilot setup](adapters/copilot/README.md) | Swagger 2 JSON REST-tool contract; tenant/hosting work remains |
 | Implement with a group | [Editable worksheet](docs/implementation-worksheet.md) · [Four-page PDF](docs/implementation-worksheet.pdf) · [Print HTML](docs/implementation-worksheet.html) | Owners, environment, approvals, pilot gates and rollback |
+| Scope a governed sales pilot | [Action-product worksheet](docs/sales-pilot-worksheet.md) · [PDF](docs/sales-pilot-worksheet.pdf) | Proposed follow-up, distribution, Creatio/Salesloft handoffs and release gates; no live connectors |
 | See the approved PRC companion | [One-page PDF](docs/companion/PRC-Rock-Note-Taking-Agent.pdf) · [HTML](docs/companion/PRC-Rock-Note-Taking-Agent.html) | Exact approved companion; not implementation evidence |
 
 Clone this private repo with an authorized account, then run **from its root**:
