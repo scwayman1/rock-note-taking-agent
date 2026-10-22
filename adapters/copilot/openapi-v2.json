@@ -1,0 +1,1412 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Rock Note Taking Agent \u2014 preview-only local contract",
+    "version": "0.1.0"
+  },
+  "host": "127.0.0.1:8765",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "BearerToken": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Local only: full value Bearer <token>. Hosted deployment requires separately implemented identity and authorization."
+    }
+  },
+  "security": [
+    {
+      "BearerToken": []
+    }
+  ],
+  "paths": {
+    "/ingest": {
+      "post": {
+        "operationId": "rock_ingest",
+        "summary": "Rock ingest",
+        "description": "Validate bounded canonical meeting evidence and return source hashes. No model synthesis. HTTP hashes cover supplied JSON after canonical serialization, not original upstream export bytes.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "evidence": {
+                  "type": "object",
+                  "properties": {
+                    "schema_version": {
+                      "type": "string",
+                      "enum": [
+                        "0.1"
+                      ]
+                    },
+                    "meeting_id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20000
+                    },
+                    "start": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "end": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "boundary_reviewed": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "adjacent_sources_checked": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "exclusions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 20000
+                      }
+                    },
+                    "gaps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "end": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "reason": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          }
+                        },
+                        "required": [
+                          "start",
+                          "end",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "utterances": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "start": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "end": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "speaker": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                },
+                                "text": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                },
+                                "uncertainty": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 20000
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "start",
+                                "end",
+                                "speaker",
+                                "text",
+                                "uncertainty"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1,
+                            "maxItems": 5000
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "utterances"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "minItems": 1,
+                      "maxItems": 100
+                    }
+                  },
+                  "required": [
+                    "schema_version",
+                    "meeting_id",
+                    "title",
+                    "start",
+                    "end",
+                    "boundary_reviewed",
+                    "adjacent_sources_checked",
+                    "exclusions",
+                    "gaps",
+                    "sources"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "evidence"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "evidence": {
+                  "type": "object",
+                  "properties": {
+                    "schema_version": {
+                      "type": "string",
+                      "enum": [
+                        "0.1"
+                      ]
+                    },
+                    "meeting_id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20000
+                    },
+                    "start": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "end": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "boundary_reviewed": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "adjacent_sources_checked": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "exclusions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 20000
+                      }
+                    },
+                    "gaps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "end": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "reason": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          }
+                        },
+                        "required": [
+                          "start",
+                          "end",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "utterances": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "start": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "end": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "speaker": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                },
+                                "text": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                },
+                                "uncertainty": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 20000
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "start",
+                                "end",
+                                "speaker",
+                                "text",
+                                "uncertainty"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1,
+                            "maxItems": 5000
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "utterances"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "minItems": 1,
+                      "maxItems": 100
+                    }
+                  },
+                  "required": [
+                    "schema_version",
+                    "meeting_id",
+                    "title",
+                    "start",
+                    "end",
+                    "boundary_reviewed",
+                    "adjacent_sources_checked",
+                    "exclusions",
+                    "gaps",
+                    "sources"
+                  ],
+                  "additionalProperties": false
+                },
+                "manifest": {
+                  "type": "object",
+                  "properties": {
+                    "schema_version": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20000
+                    },
+                    "input_sha256": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20000
+                    },
+                    "canonical_sha256": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20000
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "canonical_sha256": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "utterance_count": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "source_id",
+                          "canonical_sha256",
+                          "utterance_count"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "limitations": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20000
+                    }
+                  },
+                  "required": [
+                    "schema_version",
+                    "input_sha256",
+                    "canonical_sha256",
+                    "sources",
+                    "limitations"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "evidence",
+                "manifest"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "413": {
+            "description": "Body exceeds 1 MiB"
+          }
+        }
+      }
+    },
+    "/validate": {
+      "post": {
+        "operationId": "rock_validate",
+        "summary": "Rock validate",
+        "description": "Validate draft structure and exact evidence anchors; does not verify semantic entailment, authority or consent.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "evidence": {
+                  "type": "object",
+                  "properties": {
+                    "schema_version": {
+                      "type": "string",
+                      "enum": [
+                        "0.1"
+                      ]
+                    },
+                    "meeting_id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20000
+                    },
+                    "start": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "end": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "boundary_reviewed": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "adjacent_sources_checked": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "exclusions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 20000
+                      }
+                    },
+                    "gaps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "end": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "reason": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          }
+                        },
+                        "required": [
+                          "start",
+                          "end",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "utterances": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "start": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "end": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "speaker": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                },
+                                "text": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                },
+                                "uncertainty": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 20000
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "start",
+                                "end",
+                                "speaker",
+                                "text",
+                                "uncertainty"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1,
+                            "maxItems": 5000
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "utterances"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "minItems": 1,
+                      "maxItems": 100
+                    }
+                  },
+                  "required": [
+                    "schema_version",
+                    "meeting_id",
+                    "title",
+                    "start",
+                    "end",
+                    "boundary_reviewed",
+                    "adjacent_sources_checked",
+                    "exclusions",
+                    "gaps",
+                    "sources"
+                  ],
+                  "additionalProperties": false
+                },
+                "draft": {
+                  "type": "object",
+                  "properties": {
+                    "schema_version": {
+                      "type": "string",
+                      "enum": [
+                        "0.1"
+                      ]
+                    },
+                    "meeting_id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                    },
+                    "edition": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 999999
+                    },
+                    "summary": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "utterance_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "quote": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                }
+                              },
+                              "required": [
+                                "source_id",
+                                "utterance_id",
+                                "quote"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "text",
+                          "refs"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "ratified_decision",
+                              "apparent_agreement",
+                              "aligned_direction",
+                              "proposal",
+                              "reported_current",
+                              "context",
+                              "committed_action",
+                              "editorial_action",
+                              "open_question"
+                            ]
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "owner": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "deadline": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "utterance_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "quote": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                }
+                              },
+                              "required": [
+                                "source_id",
+                                "utterance_id",
+                                "quote"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1
+                          },
+                          "owner_refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "utterance_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "quote": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                }
+                              },
+                              "required": [
+                                "source_id",
+                                "utterance_id",
+                                "quote"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "deadline_refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "utterance_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "quote": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                }
+                              },
+                              "required": [
+                                "source_id",
+                                "utterance_id",
+                                "quote"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "text",
+                          "owner",
+                          "deadline",
+                          "refs",
+                          "owner_refs",
+                          "deadline_refs"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "caveats": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 20000
+                      }
+                    },
+                    "review": {
+                      "type": "object",
+                      "properties": {
+                        "evidence_reviewed": {
+                          "type": "boolean"
+                        },
+                        "release_approved": {
+                          "type": "boolean"
+                        },
+                        "reviewer": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 20000
+                        },
+                        "approved_at": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 20000
+                        }
+                      },
+                      "required": [
+                        "evidence_reviewed",
+                        "release_approved",
+                        "reviewer",
+                        "approved_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "schema_version",
+                    "meeting_id",
+                    "edition",
+                    "summary",
+                    "items",
+                    "caveats",
+                    "review"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "evidence",
+                "draft"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "semantic_review_required": {
+                  "type": "boolean"
+                },
+                "publication_performed": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "valid",
+                "semantic_review_required",
+                "publication_performed"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "413": {
+            "description": "Body exceeds 1 MiB"
+          }
+        }
+      }
+    },
+    "/render": {
+      "post": {
+        "operationId": "rock_render",
+        "summary": "Rock render",
+        "description": "Render restricted DRAFT HTML and non-activated actions CSV only; never publish, send or authorize release.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "evidence": {
+                  "type": "object",
+                  "properties": {
+                    "schema_version": {
+                      "type": "string",
+                      "enum": [
+                        "0.1"
+                      ]
+                    },
+                    "meeting_id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20000
+                    },
+                    "start": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "end": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "boundary_reviewed": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "adjacent_sources_checked": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "exclusions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 20000
+                      }
+                    },
+                    "gaps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "end": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "reason": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          }
+                        },
+                        "required": [
+                          "start",
+                          "end",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "utterances": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "start": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "end": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "speaker": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                },
+                                "text": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                },
+                                "uncertainty": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 20000
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "start",
+                                "end",
+                                "speaker",
+                                "text",
+                                "uncertainty"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1,
+                            "maxItems": 5000
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "utterances"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "minItems": 1,
+                      "maxItems": 100
+                    }
+                  },
+                  "required": [
+                    "schema_version",
+                    "meeting_id",
+                    "title",
+                    "start",
+                    "end",
+                    "boundary_reviewed",
+                    "adjacent_sources_checked",
+                    "exclusions",
+                    "gaps",
+                    "sources"
+                  ],
+                  "additionalProperties": false
+                },
+                "draft": {
+                  "type": "object",
+                  "properties": {
+                    "schema_version": {
+                      "type": "string",
+                      "enum": [
+                        "0.1"
+                      ]
+                    },
+                    "meeting_id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                    },
+                    "edition": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 999999
+                    },
+                    "summary": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "utterance_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "quote": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                }
+                              },
+                              "required": [
+                                "source_id",
+                                "utterance_id",
+                                "quote"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "text",
+                          "refs"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "ratified_decision",
+                              "apparent_agreement",
+                              "aligned_direction",
+                              "proposal",
+                              "reported_current",
+                              "context",
+                              "committed_action",
+                              "editorial_action",
+                              "open_question"
+                            ]
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "owner": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "deadline": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "utterance_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "quote": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                }
+                              },
+                              "required": [
+                                "source_id",
+                                "utterance_id",
+                                "quote"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1
+                          },
+                          "owner_refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "utterance_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "quote": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                }
+                              },
+                              "required": [
+                                "source_id",
+                                "utterance_id",
+                                "quote"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "deadline_refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "utterance_id": {
+                                  "type": "string",
+                                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+                                },
+                                "quote": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 20000
+                                }
+                              },
+                              "required": [
+                                "source_id",
+                                "utterance_id",
+                                "quote"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "text",
+                          "owner",
+                          "deadline",
+                          "refs",
+                          "owner_refs",
+                          "deadline_refs"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "caveats": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 20000
+                      }
+                    },
+                    "review": {
+                      "type": "object",
+                      "properties": {
+                        "evidence_reviewed": {
+                          "type": "boolean"
+                        },
+                        "release_approved": {
+                          "type": "boolean"
+                        },
+                        "reviewer": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 20000
+                        },
+                        "approved_at": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 20000
+                        }
+                      },
+                      "required": [
+                        "evidence_reviewed",
+                        "release_approved",
+                        "reviewer",
+                        "approved_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "schema_version",
+                    "meeting_id",
+                    "edition",
+                    "summary",
+                    "items",
+                    "caveats",
+                    "review"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "evidence",
+                "draft"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                },
+                "html": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                },
+                "actions_csv": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                }
+              },
+              "required": [
+                "status",
+                "html",
+                "actions_csv"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "413": {
+            "description": "Body exceeds 1 MiB"
+          }
+        }
+      }
+    }
+  }
+}

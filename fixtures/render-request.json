@@ -1,0 +1,106 @@
+{
+  "evidence": {
+    "schema_version": "0.1",
+    "meeting_id": "synthetic-rock-001",
+    "title": "SYNTHETIC planning meeting",
+    "start": "2026-10-20T09:00:00Z",
+    "end": "2026-10-20T09:10:00Z",
+    "boundary_reviewed": true,
+    "adjacent_sources_checked": true,
+    "exclusions": [
+      "Ambient conversation outside asserted window excluded."
+    ],
+    "gaps": [
+      {
+        "start": "2026-10-20T09:05:00Z",
+        "end": "2026-10-20T09:06:00Z",
+        "reason": "Capture unavailable; contents unknown."
+      }
+    ],
+    "sources": [
+      {
+        "id": "s1",
+        "label": "SYNTHETIC fixture, not a real transcript",
+        "utterances": [
+          {
+            "id": "u1",
+            "start": "2026-10-20T09:00:00Z",
+            "end": "2026-10-20T09:01:00Z",
+            "speaker": "Facilitator",
+            "text": "I propose a small pilot. This is not approved.",
+            "uncertainty": []
+          },
+          {
+            "id": "u2",
+            "start": "2026-10-20T09:02:00Z",
+            "end": "2026-10-20T09:03:00Z",
+            "speaker": "unknown",
+            "text": "Could someone review the pilot scope?",
+            "uncertainty": [
+              "Speaker identity unknown."
+            ]
+          },
+          {
+            "id": "u3",
+            "start": "2026-10-20T09:08:00Z",
+            "end": "2026-10-20T09:09:00Z",
+            "speaker": "Facilitator",
+            "text": "I will draft the pilot outline. No deadline was agreed.",
+            "uncertainty": []
+          }
+        ]
+      }
+    ]
+  },
+  "draft": {
+    "schema_version": "0.1",
+    "meeting_id": "synthetic-rock-001",
+    "edition": 1,
+    "summary": [
+      {
+        "id": "n1",
+        "text": "A small pilot was proposed, not approved.",
+        "refs": [
+          {
+            "source_id": "s1",
+            "utterance_id": "u1",
+            "quote": "I propose a small pilot."
+          }
+        ]
+      }
+    ],
+    "items": [
+      {
+        "id": "a1",
+        "kind": "committed_action",
+        "text": "Draft the pilot outline.",
+        "owner": "Facilitator",
+        "deadline": "unknown",
+        "refs": [
+          {
+            "source_id": "s1",
+            "utterance_id": "u3",
+            "quote": "I will draft the pilot outline."
+          }
+        ],
+        "owner_refs": [
+          {
+            "source_id": "s1",
+            "utterance_id": "u3",
+            "quote": "I will draft the pilot outline."
+          }
+        ],
+        "deadline_refs": []
+      }
+    ],
+    "caveats": [
+      "SYNTHETIC. Unknown speaker and capture gap; no reconstruction."
+    ],
+    "review": {
+      "evidence_reviewed": false,
+      "release_approved": false,
+      "reviewer": "unknown",
+      "approved_at": "unknown"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1",
+  "meeting_id": "synthetic-rock-001",
+  "edition": 1,
+  "summary": [
+    {
+      "id": "n1",
+      "text": "A small pilot was proposed, not approved.",
+      "refs": [
+        {
+          "source_id": "s1",
+          "utterance_id": "u1",
+          "quote": "I propose a small pilot."
+        }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "a1",
+      "kind": "committed_action",
+      "text": "Draft the pilot outline.",
+      "owner": "Facilitator",
+      "deadline": "unknown",
+      "refs": [
+        {
+          "source_id": "s1",
+          "utterance_id": "u3",
+          "quote": "I will draft the pilot outline."
+        }
+      ],
+      "owner_refs": [
+        {
+          "source_id": "s1",
+          "utterance_id": "u3",
+          "quote": "I will draft the pilot outline."
+        }
+      ],
+      "deadline_refs": []
+    }
+  ],
+  "caveats": [
+    "SYNTHETIC. Unknown speaker and capture gap; no reconstruction."
+  ],
+  "review": {
+    "evidence_reviewed": false,
+    "release_approved": false,
+    "reviewer": "unknown",
+    "approved_at": "unknown"
+  }
+}
